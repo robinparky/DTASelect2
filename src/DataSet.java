@@ -290,12 +290,13 @@ public class DataSet {
 						.encode(this.Cutoffs.UseCustomPath ? this.Cutoffs.CustomPath
 								: this.SourceDirectory) + "&";
 		// StringBuffer CGIBuild;
+		boolean printHTML = this.Cutoffs.printHTML;
 		File CurrentDirectory = new File(System.getProperty("user.dir"));
 		File SpectrumDirectory;
 		String SpectrumFile;
 		File OutputFile;
 		FileWriter OutputFileWriter;
-		BufferedWriter Outgoing;
+		BufferedWriter Outgoing =null;
 		File OutputTXTFile;
 		FileWriter OutputTXTFileWriter;
 		BufferedWriter OutgoingTXT;
@@ -343,9 +344,12 @@ public class DataSet {
 		StaticModString = StaticModCGI.toString() + "&Pep=";
 		try {
 			CurrentDirectory = new File(CurrentDirectory.getCanonicalPath());
-			OutputFile = new File(CurrentDirectory, FileName + ".html");
-			OutputFileWriter = new FileWriter(OutputFile);
-			Outgoing = new BufferedWriter(OutputFileWriter);
+			if(printHTML)
+			{
+				OutputFile = new File(CurrentDirectory, FileName + ".html");
+				OutputFileWriter = new FileWriter(OutputFile);
+				Outgoing = new BufferedWriter(OutputFileWriter);
+			}
 			OutputTXTFile = new File(CurrentDirectory, FileName + "-filter.txt");
 			OutputTXTFileWriter = new FileWriter(OutputTXTFile);
 			OutgoingTXT = new BufferedWriter(OutputTXTFileWriter);
@@ -353,74 +357,74 @@ public class DataSet {
 			setProtFPInput(fpGreper(CommandLineOptions));
 			setPepFPInput(fpGreper(CommandLineOptions));
 			// Write HTML header
-			Outgoing.write("<HTML><HEAD><TITLE>\nD ");
+			if(printHTML) Outgoing.write("<HTML><HEAD><TITLE>\nD ");
 			if (FileName.equals("DTASelect")) {
 				Parser = new StringTokenizer(System.getProperty("user.dir"),
 						System.getProperty("file.separator"));
 				while (Parser.hasMoreTokens())
 					Temp1 = Parser.nextToken();
-				Outgoing.write(Temp1);
+				if(printHTML) Outgoing.write(Temp1);
 			} else {
-				Outgoing.write(FileName);
+				if(printHTML) Outgoing.write(FileName);
 			}
-			Outgoing.write("</title>\n<style type=\"text/css\">\n");
-			Outgoing.write("td {\n");
-			Outgoing.write("\tfont-family: Courier, monospace;\n");
-			Outgoing.write("\tfont-weight: normal;\n");
-			Outgoing.write("\tfont-size: 10pt;\n");
-			Outgoing.write("\tpadding: 0px 10px\n");
-			Outgoing.write("\t}\n");
-			Outgoing.write("th {\n");
-			Outgoing.write("\tfont-family: \"MS Arial\", sans-serif;\n");
-			Outgoing.write("\tfont-weight: bold;\n");
-			Outgoing.write("\tfont-size: 10pt\n\t}\n");
-			Outgoing.write("em {\n");
-			Outgoing.write("\tcolor: red;\n");
-			Outgoing.write("\tfont-family: \"MS Arial\", sans-serif;\n");
-			Outgoing.write("\tfont-style: normal;\n");
-			Outgoing.write("\tfont-weight: bold;\n");
-			Outgoing.write("\tfont-size: 12pt\n");
-			Outgoing.write("\t}\n");
-			Outgoing.write("dfn {\n");
-			Outgoing.write("\tfont-family: \"MS Arial\", sans-serif;\n");
-			Outgoing.write("\tfont-style: normal;\n");
-			Outgoing.write("\tfont-weight: normal;\n");
-			Outgoing.write("\tfont-size: 10pt\n");
-			Outgoing.write("\t}\n");
-			Outgoing.write("</style>\n");
-			Outgoing.write("</head>");
-			Outgoing.write("<body>\n");
-			Outgoing.write(Protein.Version() + "<BR>\n");
-			Outgoing.write(Citation + "<BR>\n");
-			Outgoing.write((this.Cutoffs.UseCustomPath ? this.Cutoffs.CustomPath
+			if(printHTML) Outgoing.write("</title>\n<style type=\"text/css\">\n");
+			if(printHTML) Outgoing.write("td {\n");
+			if(printHTML) Outgoing.write("\tfont-family: Courier, monospace;\n");
+			if(printHTML) Outgoing.write("\tfont-weight: normal;\n");
+			if(printHTML) Outgoing.write("\tfont-size: 10pt;\n");
+			if(printHTML) Outgoing.write("\tpadding: 0px 10px\n");
+			if(printHTML) Outgoing.write("\t}\n");
+			if(printHTML) Outgoing.write("th {\n");
+			if(printHTML) Outgoing.write("\tfont-family: \"MS Arial\", sans-serif;\n");
+			if(printHTML) Outgoing.write("\tfont-weight: bold;\n");
+			if(printHTML) Outgoing.write("\tfont-size: 10pt\n\t}\n");
+			if(printHTML) Outgoing.write("em {\n");
+			if(printHTML) Outgoing.write("\tcolor: red;\n");
+			if(printHTML) Outgoing.write("\tfont-family: \"MS Arial\", sans-serif;\n");
+			if(printHTML) Outgoing.write("\tfont-style: normal;\n");
+			if(printHTML) Outgoing.write("\tfont-weight: bold;\n");
+			if(printHTML) Outgoing.write("\tfont-size: 12pt\n");
+			if(printHTML) Outgoing.write("\t}\n");
+			if(printHTML) Outgoing.write("dfn {\n");
+			if(printHTML) Outgoing.write("\tfont-family: \"MS Arial\", sans-serif;\n");
+			if(printHTML) Outgoing.write("\tfont-style: normal;\n");
+			if(printHTML) Outgoing.write("\tfont-weight: normal;\n");
+			if(printHTML) Outgoing.write("\tfont-size: 10pt\n");
+			if(printHTML) Outgoing.write("\t}\n");
+			if(printHTML) Outgoing.write("</style>\n");
+			if(printHTML) Outgoing.write("</head>");
+			if(printHTML) Outgoing.write("<body>\n");
+			if(printHTML) Outgoing.write(Protein.Version() + "<BR>\n");
+			if(printHTML) Outgoing.write(Citation + "<BR>\n");
+			if(printHTML) Outgoing.write((this.Cutoffs.UseCustomPath ? this.Cutoffs.CustomPath
 					: this.SourceDirectory)
 					+ "<BR>\n");
 			String dbName = Cutoffs.noDB ? "null" : SequestParams.DBName;
-			Outgoing.write(dbName + "<BR>\n");
-			Outgoing.write(this.SQTGenerator + " " + this.SQTGeneratorVersion
+			if(printHTML) Outgoing.write(dbName + "<BR>\n");
+			if(printHTML) Outgoing.write(this.SQTGenerator + " " + this.SQTGeneratorVersion
 					+ " in " + this.IDFileFormat + " format.<BR>\n");
 			// added by Howard Choi
 			String tmpCommandLineOptions = getTmpCmdLineOptions(
 					CommandLineOptions, additionalFP);
-			Outgoing.write(tmpCommandLineOptions + "<BR>\n");
+			if(printHTML) Outgoing.write(tmpCommandLineOptions + "<BR>\n");
 			// If other HTML reports were requested, link to them
 			if (Cutoffs.PrintAlignment) {
-				Outgoing.write("<a TARGET=\"mods\" href=\"" + FileName
+				if(printHTML) Outgoing.write("<a TARGET=\"mods\" href=\"" + FileName
 						+ "-align.html\">View</a> alignment report.<BR>\n");
 			}
 			if (Cutoffs.PrintMods) {
-				Outgoing.write("<a TARGET=\"mods\" href=\"" + FileName
+				if(printHTML) Outgoing.write("<a TARGET=\"mods\" href=\"" + FileName
 						+ "-mods.html\">View</a> modification report.<BR>\n");
 			}
-			Outgoing.write("<a href=\"#Summary\"> Jump </a> to the summary table.<br><BR>\n");
+			if(printHTML) Outgoing.write("<a href=\"#Summary\"> Jump </a> to the summary table.<br><BR>\n");
 			String htmlMods = Cutoffs.noDB ? "null":SequestParams.GetHTMLMods();
-			Outgoing.write(htmlMods + newline);
+			if(printHTML) Outgoing.write(htmlMods + newline);
 			// Write the criteria in effect for this run
-			Outgoing.write("<table border>");
-			Outgoing.write(Cutoffs.PrintCriteria("<TR><TD>", "</TD></TR>\n",
+			if(printHTML) Outgoing.write("<table border>");
+			if(printHTML) Outgoing.write(Cutoffs.PrintCriteria("<TR><TD>", "</TD></TR>\n",
 					CellSep));
-			Outgoing.write("</table>\n");
-			Outgoing.write("<h4>Locus Key:</h4>\n<table border><TR><td><a href=\"\">Validation Status</a></td><TD><Font COLOR=\"red\">"
+			if(printHTML) Outgoing.write("</table>\n");
+			if(printHTML) Outgoing.write("<h4>Locus Key:</h4>\n<table border><TR><td><a href=\"\">Validation Status</a></td><TD><Font COLOR=\"red\">"
 					+ "Locus</td><td>"
 					+ "Sequence Count</td><td>Spectrum Count</td><td>"
 					+ "<a href=\"\">Sequence Coverage</a></td><TD>Length</td>"
@@ -445,12 +449,12 @@ public class DataSet {
 					.write("Locus\tSequence Count\tSpectrum Count\tSequence Coverage\tLength\tMolWt\tpI\tValidation Status\t");
 			AIRunner = AddedInfo.Next;
 			while (AIRunner != null) {
-				Outgoing.write("<td>" + AIRunner.Descriptor + "</td>");
+				if(printHTML) Outgoing.write("<td>" + AIRunner.Descriptor + "</td>");
 				OutgoingTXT.write(AIRunner.Descriptor + tab);
 				AIRunner = AIRunner.Next;
 			}
-			Outgoing.write("<TD>NSAF</td><TD>EMPAI</td><TD>Descriptive Name</td></tr></table>\n");
-			Outgoing.write("<h4>Similarity Key:</h4>\n<table border><tr><td>Locus</td><td># of identical peptides</td>"
+			if(printHTML) Outgoing.write("<TD>NSAF</td><TD>EMPAI</td><TD>Descriptive Name</td></tr></table>\n");
+			if(printHTML) Outgoing.write("<h4>Similarity Key:</h4>\n<table border><tr><td>Locus</td><td># of identical peptides</td>"
 					+ "<td># of differing peptides</td></tr></table>\n");
 			OutgoingTXT
 					.write("NSAF\tEMPAI\tDescriptive Name\nUnique\tFileName\t"
@@ -515,7 +519,7 @@ public class DataSet {
 					//MatchRunner.IsDecoy = false;
 				}*/
 				//MatchRunner.DTASetDecoy();
-				Outgoing.write("<HR><table>\n");
+				if(printHTML) Outgoing.write("<HR><table>\n");
 				// If we're using classifications supplied by the user...
 				if (Cutoffs.UseClassifications) {
 					// If we haven't a class yet
@@ -536,14 +540,14 @@ public class DataSet {
 						LastClassification = CurrentClassification;
 						// If this number corresponded to a class
 						if (CurrentClassification != null) {
-							Outgoing.write("<h2><a name=\"Class"
+							if(printHTML) Outgoing.write("<h2><a name=\"Class"
 									+ LastClassification.Identifier + "\">"
 									+ LastClassification.Descriptor
 									+ "</h2></table>\n<table>");
 							OutgoingTXT.write("\nClass\t"
 									+ LastClassification.Descriptor);
 						} else {
-							Outgoing.write("<h2><a name=\"UnClass\">Uncategorized Loci</h2></table>\n<table>");
+							if(printHTML) Outgoing.write("<h2><a name=\"UnClass\">Uncategorized Loci</h2></table>\n<table>");
 							OutgoingTXT.write("\nClass\tUnclassified");
 						}
 					}
@@ -569,7 +573,7 @@ public class DataSet {
 					// Write the Locus-specific information
 					Temp1 = new Integer(MatchRunner.NPeptides).toString();
 					Temp2 = new Integer(MatchRunner.NSpectra).toString();
-					Outgoing.write("<TR><TD>" + ProtEval
+					if(printHTML) Outgoing.write("<TR><TD>" + ProtEval
 							+ URLEncoder.encode(MatchRunner.Locus) + "\">"
 							+ new Character(MatchRunner.Validated).toString()
 							+ "</a>" + CellSep + "<em><a name=\""
@@ -587,7 +591,7 @@ public class DataSet {
 					}
 					
 					if (MatchRunner.SequenceLength == 0) {
-						Outgoing.write("<a href=\"\">0%</a></td><td><dfn>Not found in database</td></td></tr>\n");
+						if(printHTML) Outgoing.write("<a href=\"\">0%</a></td><td><dfn>Not found in database</td></td></tr>\n");
 						OutgoingTXT.write("0%\t0\t0\t0\t0\t0\t0\tNot found in database");
 					} else {
 						Descrip = MatchRunner.Gene;
@@ -599,13 +603,13 @@ public class DataSet {
 						Descrip.replace('\"', '*');
 						Descrip.replace('\'', '*');
 						if (Config.UseDepthCGI) {
-							Outgoing.write(SeqCov
+							if(printHTML) Outgoing.write(SeqCov
 									+ URLEncoder.encode(MatchRunner.Locus));
 						} else {
-							Outgoing.write(Consensus + MatchRunner.Locus
+							if(printHTML) Outgoing.write(Consensus + MatchRunner.Locus
 									+ "&Pep=");
 						}
-						Outgoing.write(MatchRunner.Coverage
+						if(printHTML) Outgoing.write(MatchRunner.Coverage
 								+ "\">"
 								+ MatchRunner.SequenceCoverage
 								+ "%"
@@ -649,19 +653,19 @@ public class DataSet {
 							PoRunner = MatchRunner.AuxInfo.Next;
 							while ((AIRunner != null) && (PoRunner != null)) {
 								if (AIRunner.IsFloat) {
-									Outgoing.write(new Float(PoRunner.Intensity)
+									if(printHTML) Outgoing.write(new Float(PoRunner.Intensity)
 											.toString());
 									OutgoingTXT.write(new Float(
 											PoRunner.Intensity).toString());
 								} else {
-									Outgoing.write(new Integer(Math
+									if(printHTML) Outgoing.write(new Integer(Math
 											.round(PoRunner.Intensity))
 											.toString());
 									OutgoingTXT.write(new Integer(Math
 											.round(PoRunner.Intensity))
 											.toString());
 								}
-								Outgoing.write(CellSep);
+								if(printHTML) Outgoing.write(CellSep);
 								OutgoingTXT.write("\t");
 								AIRunner = AIRunner.Next;
 								PoRunner = PoRunner.Next;
@@ -673,17 +677,17 @@ public class DataSet {
 
 						MatchRunner.calculateNSAFandEMPAI(NSAF_sum);
 
-						Outgoing.write(MatchRunner.NSAF + CellSep
+						if(printHTML) Outgoing.write(MatchRunner.NSAF + CellSep
 								+ MatchRunner.EMPAI);
 						OutgoingTXT.write(MatchRunner.NSAF + "\t"
 								+ MatchRunner.EMPAI);
 
-						Outgoing.write(CellSep);
+						if(printHTML) Outgoing.write(CellSep);
 						OutgoingTXT.write("\t");
 
 						// Write the descriptive name of this locus to HTML and
 						// TXT output files
-						Outgoing.write("<dfn>" + Descrip + "</td></tr>\n");
+						if(printHTML) Outgoing.write("<dfn>" + Descrip + "</td></tr>\n");
 						OutgoingTXT.write(MatchRunner.Gene);
 
 					}
@@ -705,11 +709,11 @@ public class DataSet {
 				}
 				MatchRunner.DTASetDecoy();
 				MatchRunner = null;
-				Outgoing.write("</table>\n");
+				if(printHTML) Outgoing.write("</table>\n");
 
 				// Print DTAFile data for this protein
-				Outgoing.write("<table>\n");
-				Outgoing.write("<tr><TH> <th>Filename<th>" + hXCorr + "<TH>"
+				if(printHTML) Outgoing.write("<table>\n");
+				if(printHTML) Outgoing.write("<tr><TH> <th>Filename<th>" + hXCorr + "<TH>"
 						+ hDeltCN + "<th>Conf%<th>ObsM+H+<th>" + hCalcPreMass
 						+ (Cutoffs.DisplayDeltaMass ? "<th>PPM" : "") + "<th>"
 						+ hSpR + "<th>" + hSpScore
@@ -719,7 +723,7 @@ public class DataSet {
 						+ (Cutoffs.DisplayHPLC ? "<th>HPLC" : "")
 						+ "<th>Ion%<th>#<th>Sequence<TH></tr>\n");
 				DTARunner = Runner.DTAs.Next;
-				//Outgoing.write("<tr><td>");
+				//if(printHTML) Outgoing.write("<tr><td>");
 				//OutgoingTXT.write("\n");
 				while (DTARunner != null) {
 
@@ -728,10 +732,10 @@ public class DataSet {
 						DTARunner = DTARunner.Next;
 						continue;
 					}*/
-					Outgoing.write("<tr><td>");
+					if(printHTML) Outgoing.write("<tr><td>");
 					OutgoingTXT.write("\n");
 					if (DTARunner.UniqueToLocus) {
-						Outgoing.write("*");
+						if(printHTML) Outgoing.write("*");
 						OutgoingTXT.write("*");
 					}
 					/*
@@ -740,26 +744,26 @@ public class DataSet {
 						continue;
 					}*/
 					if (DTARunner.EquivSeq != 1) {
-						Outgoing.write(new Byte(DTARunner.EquivSeq).toString());
+						if(printHTML) Outgoing.write(new Byte(DTARunner.EquivSeq).toString());
 						OutgoingTXT.write(new Byte(DTARunner.EquivSeq)
 								.toString());
 					}
 					if (DTARunner.Subdirectory.equals("pta")
 							|| DTARunner.Subdirectory.equals("phs")) {
-						Outgoing.write("P");
+						if(printHTML) Outgoing.write("P");
 						OutgoingTXT.write("P");
 					}
 					switch (DTARunner.Validated) {
 					case 'Y':
-						Outgoing.write("<FONT COLOR=\"GREEN\">Y</FONT>");
+						if(printHTML) Outgoing.write("<FONT COLOR=\"GREEN\">Y</FONT>");
 						OutgoingTXT.write("Y");
 						break;
 					case 'M':
-						Outgoing.write("<FONT COLOR=\"ORANGE\">M</FONT>");
+						if(printHTML) Outgoing.write("<FONT COLOR=\"ORANGE\">M</FONT>");
 						OutgoingTXT.write("M");
 						break;
 					case 'N':
-						Outgoing.write("<FONT COLOR=\"RED\">N</FONT>");
+						if(printHTML) Outgoing.write("<FONT COLOR=\"RED\">N</FONT>");
 						OutgoingTXT.write("N");
 						break;
 					}
@@ -828,7 +832,7 @@ public class DataSet {
 						// Note that we'll need to add specific
 						// handling for Mascot CGIs when feasible.
 						// DisplayType == 2 for Mascot.
-						Outgoing.write(NewShow
+						if(printHTML) Outgoing.write(NewShow
 								+ DTARunner.ShowString()
 								+ CellSep
 								+ new Float(DTARunner.XCorr).toString()
@@ -884,7 +888,7 @@ public class DataSet {
 							MSBug = true;
 							SpectrumFile = "";
 						}
-						Outgoing.write(DisplayIons
+						if(printHTML) Outgoing.write(DisplayIons
 								+ SpectrumFile
 								+ ".dta"
 								+ (DTARunner.Modified ? DTARunner
@@ -948,42 +952,51 @@ public class DataSet {
 								+ DTARunner.Sequence + "</a></td><td>");
 					}
 					if (!Cutoffs.Brief) {
-						Descrip = LocusList
-								.PrintLinksForPeptide(DTARunner.FileName);
-						Outgoing.write(Descrip);
+						if(printHTML)
+						{
+							Descrip = LocusList
+									.PrintLinksForPeptide(DTARunner.FileName);
+							Outgoing.write(Descrip);
+
+						}
+
 					}
 					DTARunner = DTARunner.Next;
-					Outgoing.write("</tr>\n");
+					if(printHTML) Outgoing.write("</tr>\n");
 
 				}
-				Outgoing.write("</table>\n");
+				if(printHTML) Outgoing.write("</table>\n");
 				// Set up Similarities field for DTASelect.html creation
 				if (!Cutoffs.Brief) {
-					Similarities = new StringBuffer();
-					MatchRunner = LocusList.Next;
-					PepCount = Runner.DTACount();
-					while (MatchRunner != null) {
-						ScoreBuffer = Runner.Similarity(MatchRunner);
-						MatchingPeptides = (PepCount + MatchRunner.DTACount() + ScoreBuffer) / 4;
-						// if ( (ScoreBuffer > -1) && (MatchRunner != Runner) )
-						// {
-						if ((MatchingPeptides > 0) && (MatchRunner != Runner)) {
-							Similarities.append("<a href=\"#");
-							Similarities.append(MatchRunner.Locus);
-							Similarities.append("\">");
-							Similarities.append(MatchRunner.Locus);
-							Similarities.append("</a>(");
-							Similarities.append(MatchingPeptides);
-							Similarities.append(":");
-							Similarities.append(PepCount - MatchingPeptides);
-							Similarities.append(")<BR>");
+					if(printHTML)
+					{
+						Similarities = new StringBuffer();
+						MatchRunner = LocusList.Next;
+						PepCount = Runner.DTACount();
+						while (MatchRunner != null) {
+							ScoreBuffer = Runner.Similarity(MatchRunner);
+							MatchingPeptides = (PepCount + MatchRunner.DTACount() + ScoreBuffer) / 4;
+							// if ( (ScoreBuffer > -1) && (MatchRunner != Runner) )
+							// {
+							if ((MatchingPeptides > 0) && (MatchRunner != Runner)) {
+								Similarities.append("<a href=\"#");
+								Similarities.append(MatchRunner.Locus);
+								Similarities.append("\">");
+								Similarities.append(MatchRunner.Locus);
+								Similarities.append("</a>(");
+								Similarities.append(MatchingPeptides);
+								Similarities.append(":");
+								Similarities.append(PepCount - MatchingPeptides);
+								Similarities.append(")<BR>");
+							}
+							MatchRunner = MatchRunner.Next;
 						}
-						MatchRunner = MatchRunner.Next;
+						if (Similarities.length() > 0) {
+							if(printHTML) Outgoing.write("Similarities:\n");
+							if(printHTML) Outgoing.write(Similarities.toString());
+						}
 					}
-					if (Similarities.length() > 0) {
-						Outgoing.write("Similarities:\n");
-						Outgoing.write(Similarities.toString());
-					}
+
 				}
 				Runner = Runner.Next;
 			}
@@ -1068,21 +1081,21 @@ public class DataSet {
 						/ NRForwardSpectrumCounter;
 			}
 			// Print counts of loci and DTAFiles
-			Outgoing.write("\n<a name=\"Summary\"><table border>");
-			Outgoing.write("<tr><td></td><td>Proteins</td><td>Peptide IDs</td><td>Spectra</td></tr>\n");
-			Outgoing.write("<tr><td>Unfiltered</td><td>"
+			if(printHTML) Outgoing.write("\n<a name=\"Summary\"><table border>");
+			if(printHTML) Outgoing.write("<tr><td></td><td>Proteins</td><td>Peptide IDs</td><td>Spectra</td></tr>\n");
+			if(printHTML) Outgoing.write("<tr><td>Unfiltered</td><td>"
 					+ new Integer(this.UnfilteredLocusCount).toString()
 					+ CellSep + new Integer(this.UnfilteredOUTCount).toString()
 					+ CellSep
 					+ new Integer(this.UnfilteredSpectrumCount).toString()
 					+ "</td></tr>\n");
 			/*
-			 * Outgoing.write("<tr><td>Redundant</td><td>" + new
+			 * if(printHTML) Outgoing.write("<tr><td>Redundant</td><td>" + new
 			 * Integer(RProteinCounter).toString() + CellSep + new
 			 * Integer(PeptideCounter).toString() + CellSep + new
 			 * Integer(SpectrumCounter).toString() + "</td></tr>\n");
 			 */
-			Outgoing.write("<tr><td>Filtered</td><td>"
+			if(printHTML) Outgoing.write("<tr><td>Filtered</td><td>"
 					+ new Integer(Counter).toString() + CellSep
 					+ new Integer(NRPeptideCounter).toString() + CellSep
 					+ new Integer(NRSpectrumCounter).toString()
@@ -1108,19 +1121,19 @@ public class DataSet {
 				setPepFPOutput(Float.toString(Rounding(
 						((nrDecoyVal / nrForwardVal)), 4)));
 
-				Outgoing.write("<tr><td>Forward matches</td><td>"
+				if(printHTML) Outgoing.write("<tr><td>Forward matches</td><td>"
 						+ new Integer(ForwardCounter).toString() + CellSep
 						+ new Integer(NRForwardPeptideCounter).toString()
 						+ CellSep
 						+ new Integer(NRForwardSpectrumCounter).toString()
 						+ "</td></tr>\n");
-				Outgoing.write("<tr><td>Decoy matches</td><td>"
+				if(printHTML) Outgoing.write("<tr><td>Decoy matches</td><td>"
 						+ new Integer(DecoyCounter).toString() + CellSep
 						+ new Integer(NRDecoyPeptideCounter).toString()
 						+ CellSep
 						+ new Integer(NRDecoySpectrumCounter).toString()
 						+ "</td></tr>\n");
-				Outgoing.write("<tr><td>Forward FDR</td><td>"
+				if(printHTML) Outgoing.write("<tr><td>Forward FDR</td><td>"
 						+ new Float(Protein.RoundTo(100f * ProteinFPRate, 2))
 								.toString()
 						+ "%"
@@ -1132,13 +1145,13 @@ public class DataSet {
 						+ new Float(Protein.RoundTo(100f * NRSpectrumFPRate, 2))
 								.toString() + "%" + "</td></tr>\n");
 			}
-			Outgoing.write("</table></a><BR>\n");
+			if(printHTML) Outgoing.write("</table></a><BR>\n");
 			if (Cutoffs.UseClassifications) {
-				Outgoing.write("\n<table border>");
-				Outgoing.write("<tr><td>Classification</td><td>Nonredundant Proteins</td><td>Redundant Proteins</td></tr>\n");
+				if(printHTML) Outgoing.write("\n<table border>");
+				if(printHTML) Outgoing.write("<tr><td>Classification</td><td>Nonredundant Proteins</td><td>Redundant Proteins</td></tr>\n");
 				CurrentClassification = Classifieds.Next;
 				while (CurrentClassification != null) {
-					Outgoing.write("<tr><td><a href=\"#Class"
+					if(printHTML) Outgoing.write("<tr><td><a href=\"#Class"
 							+ CurrentClassification.Identifier + "\">"
 							+ CurrentClassification.Descriptor
 							+ "</a></td><td>"
@@ -1148,18 +1161,18 @@ public class DataSet {
 							+ "</td></tr>");
 					CurrentClassification = CurrentClassification.Next;
 				}
-				Outgoing.write("<tr><td><a href=\"#UnClass\">Unclassified</a></td><td>"
+				if(printHTML) Outgoing.write("<tr><td><a href=\"#UnClass\">Unclassified</a></td><td>"
 						+ UnclassifiedNRCount
 						+ "</td><td>"
 						+ UnclassifiedRCount + "</td></tr>");
-				Outgoing.write("</table>\n");
+				if(printHTML) Outgoing.write("</table>\n");
 			}
-			Outgoing.write((this.Cutoffs.UseCustomPath ? this.Cutoffs.CustomPath
+			if(printHTML) Outgoing.write((this.Cutoffs.UseCustomPath ? this.Cutoffs.CustomPath
 					: this.SourceDirectory)
 					+ newline);
-			Outgoing.write("</body></html>");
-			Outgoing.flush();
-			Outgoing.close();
+			if(printHTML) Outgoing.write("</body></html>");
+			if(printHTML )Outgoing.flush();
+			if(printHTML) Outgoing.close();
 			// Print counts of loci and DTAFiles
 			OutgoingTXT.write("\n\tProteins\tPeptide IDs\tSpectra\n");
 			OutgoingTXT.write("Unfiltered\t"
@@ -2201,7 +2214,7 @@ public class DataSet {
 		 */
 		LocusList.GroupIdenticalsOld();
 		if (Cutoffs.UseCriteria && Cutoffs.RemoveSubsets) {
-			LocusList.RemoveSubsets();
+			LocusList.RemoveSubsetsQuick();
 		}
 		//LocusList.CalculateRedundancyForList(Cutoffs.PurgeDuplicateSequences);
 

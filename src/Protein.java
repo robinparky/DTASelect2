@@ -34,11 +34,19 @@ public class Protein {
 	float SAF;
 	float NSAF;
 	float EMPAI;
-
+	int id;
+	boolean toRemove = false;
+	private static int ID_COUNTER = 0;
+	Set<String> fileNameSet = null;
 	/*
 	 * INDIVIDUAL FUNCTIONS These are functions to be called on an individual
 	 * Protein in a list rather than on the list header itself
 	 */
+
+	public Protein()
+	{
+		id = ID_COUNTER ++ ;
+	}
 
 	public Protein Clone() {
 		Protein Copy = new Protein();
@@ -1249,6 +1257,109 @@ public class Protein {
 	 * context information, they're considered different peptides even if they
 	 * have the same observed sequence.
 	 */
+	public void RemoveSubsetsQuick()
+	{
+		Protein ThisRunner = this.Next;
+		Protein OtherRunner;
+		DTAFile ThisDTA;
+
+		// For each protein in the list,
+		System.out.println("\tRemoving subset proteins...");
+		System.out.println("\tRemoved\tMatched");
+		Map<String,List<Protein>> peptideProteinSetMap = new HashMap<>();
+
+		while ((ThisRunner != null)) {
+
+			if(!ThisRunner.toRemove)
+			{
+			/*	if(ThisRunner.Locus.equals("gi|9910588|ref|NP_064327.1|"))
+				{
+					System.out.println("DEBUG<<>>< : "+ThisRunner.toRemove);
+				}*/
+
+				ThisDTA = ThisRunner.DTAs.Next;
+				Map<Integer,Protein> proteinIDMap = new HashMap<>();
+				while ((ThisDTA != null)) {
+					int peptideId = ThisDTA.id;
+					String filename = ThisDTA.FileName;
+
+					List<Protein> proteinList = peptideProteinSetMap.getOrDefault(filename,new ArrayList<>());
+					for(Protein protein : proteinList)
+					{
+						if(!protein.toRemove && protein.id != ThisRunner.id)
+						{
+							proteinIDMap.put(protein.id, protein);
+						}
+					}
+					proteinList.add(ThisRunner);
+					peptideProteinSetMap.put(filename, proteinList);
+					ThisDTA = ThisDTA.Next;
+				}
+				for(Map.Entry<Integer,Protein> entry: proteinIDMap.entrySet())
+				{
+					OtherRunner = entry.getValue();
+					if(OtherRunner.fileNameSet == null)
+					{
+						OtherRunner.initFileNameSet();
+					}
+					if(ThisRunner.fileNameSet == null)
+					{
+						ThisRunner.initFileNameSet();
+					}
+					Set<String> currentSet = ThisRunner.fileNameSet;
+					Set<String> otherSet = OtherRunner.fileNameSet;
+					boolean isCurrentSuperSet =  currentSet.containsAll(otherSet);
+					boolean isOtherSuperSet  = otherSet.containsAll(currentSet);
+					if(isCurrentSuperSet && isOtherSuperSet)
+					{
+						OtherRunner.toRemove = true;
+						OtherRunner.fileNameSet = null;
+					}
+					else if(isCurrentSuperSet)
+					{
+						OtherRunner.toRemove = true;
+						OtherRunner.fileNameSet = null;
+					}
+					else if(isOtherSuperSet)
+					{
+						ThisRunner.toRemove = true;
+						ThisRunner.fileNameSet = null;
+					}
+				}
+			}
+			ThisRunner = ThisRunner.Next;
+		}
+	//	System.out.println("DEBUG<<>>> "+count);
+
+		ThisRunner = this;
+		boolean IsSuperset = false;
+		int RemovedTotal = 0;
+
+		while ((ThisRunner != null) && (ThisRunner.Next != null)) {
+			// Start "other" runner at head of list
+			IsSuperset = ThisRunner.Next.toRemove;
+	/*		if(ThisRunner.Next.Locus.equals("gi|9910588|ref|NP_064327.1|"))
+			{
+				System.out.println("DEBUG<<>>< Removing: "+ThisRunner.Next.toRemove);
+			}*/
+			ThisRunner.Next.fileNameSet = null;
+
+			if (IsSuperset) {
+				ThisRunner.Next.toRemove = false;
+				ThisRunner.Next = ThisRunner.Next.Next;
+				IsSuperset = false;
+				RemovedTotal++;
+			} else {
+				ThisRunner = ThisRunner.Next;
+			}
+		}
+
+		System.out.println("\tRemoved " + new Integer(RemovedTotal).toString()
+				+ " subset proteins.");
+	}
+
+
+
 	public void RemoveSubsets() {
 		// Start the runner for "this" protein at head of list
 		Protein ThisRunner = this;
@@ -1289,8 +1400,8 @@ public class Protein {
 						ThisDTA = ThisDTA.Next;
 					}
 					if (IsSuperset) {
-						System.out.println("\t" + ThisRunner.Next.Locus + "\t" + ThisRunner.Next.NSpectra + "\t"
-								+ OtherRunner.Locus + "\t" + OtherRunner.NSpectra);
+				//		System.out.println("\t" + ThisRunner.Next.Locus + "\t" + ThisRunner.Next.NSpectra + "\t"
+				//				+ OtherRunner.Locus + "\t" + OtherRunner.NSpectra);
 						RemovedTotal++;
 					}
 				}
@@ -2320,7 +2431,7 @@ public class Protein {
 	// Return a string containing the version number
 	public static String Version() {
 		//return "DTASelect v2.0.49";
-		return "DTASelect v2.1.5";
+		return "DTASelect v2.1.6";
 	}
 
 	/*
@@ -2398,6 +2509,17 @@ public class Protein {
 			return sequence;
 		}
 
+	}
+
+	private void initFileNameSet()
+	{
+		DTAFile dta = this.DTAs.Next;
+		fileNameSet = new HashSet<>();
+		while ((dta != null)) {
+			// Start with the first peptide of the other protein
+			fileNameSet.add(dta.FileName);
+			dta = dta.Next;
+		}
 	}
 
 }

@@ -273,7 +273,11 @@ public class DTASelect {
 		System.out.println("--brief\t\tReduced complexity of html file output");
 		System.out
 				.println("--path $\tSpecify location of the DTASelect folder");
-		System.out.println();
+		System.out.println("-ug\t\tRuns Protein Grouper:  this take non unique peptides from existing proteins" +
+				" and creates protein groups consisting of only unique peptides");
+		System.out.println("\t\tPlease check http://manual.integratedproteomics.com/1/en/topic/16-2-unique-group-filter" +
+				" for more information ");
+		System.out.println("-addPSM\t\tinclude all spectra from unfiltered data for identified peptides");
 		System.out.println("Defaults:");
 		System.out.println(Cutoffs.PrintCriteria("", "\n", "\t"));
 		System.exit(0);

@@ -117,6 +117,7 @@ public class SelectCriteria {
 	boolean UseMaxMW = false;
 	boolean UseMinPI = false;
 	boolean UseMaxPI = false;
+	boolean printHTML = false;
 	float MinMW = 0f;
 	float MaxMW = 10000000.0f;
 	float MinSequenceCoverage = 0f;
@@ -774,6 +775,10 @@ public class SelectCriteria {
 			} else if(args[i].equals("-addPSM"))
 			{
 				addPSM = true;
+			}
+			else if(args[i].equals("--printHTML"))
+			{
+				printHTML = true;
 			}
 			else {
 				System.out.println("I don't understand this option:  "

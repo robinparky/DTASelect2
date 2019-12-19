@@ -42,7 +42,8 @@ public class DTAFile {
     List<Integer>		sequencePositionList = new ArrayList<>();
     int			 TrypticSites;
     boolean		 IsDecoy = false;
-
+    int id;
+	private static int ID_COUNTER = 0;
     /* INDIVIDUAL FUNCTIONS
      * The following functions should be called on individual DTAFiles
      * that may or may not be part of lists
@@ -52,6 +53,11 @@ public class DTAFile {
      * Since the Next pointer is not set, the new DTAFile is not part
      * of the chain in which this DTAFile sits.
      */
+
+    public DTAFile()
+	{
+		id = ID_COUNTER++;
+	}
     public DTAFile Clone() {
 	DTAFile       Copy = new DTAFile();
 	Copy.FileName = this.FileName;
