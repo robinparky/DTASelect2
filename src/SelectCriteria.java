@@ -168,7 +168,7 @@ public class SelectCriteria {
 	boolean readFasta = false;
 
 	boolean addPSM  = false;
-
+	boolean dms  = false;
 	/*
 	 * If the user has commonly used options for DTASelect, he or she can write
 	 * them into a file called DTASelect.params and copy them around rather than
@@ -776,6 +776,10 @@ public class SelectCriteria {
 			{
 				addPSM = true;
 			}
+			else if(args[i].equals("-DMS"))
+			{
+				dms = true;
+			}
 			else if(args[i].equals("--printHTML"))
 			{
 				printHTML = true;
@@ -879,16 +883,12 @@ public class SelectCriteria {
 		return Okay;
 	}
 
-	/*
-	 * Apply the spectrum-specific filters. Return true if the identification
-	 * meets the criteria or false if it doesn't.
-	 */
-	public boolean Allow(DTAFile TestSubject) {
+	public boolean Allow(DTAFile TestSubject, boolean fromDTAReader) {
 		/*
 		 * Evaluates an individual identification to determine if it fits
 		 * selection criteria
 		 */
-		
+
 		boolean PassesSequenceCriteria = true;
 		boolean PassesMaxXCorrs = true;
 		boolean PassesXCorrCriteria = true;
@@ -962,18 +962,16 @@ public class SelectCriteria {
 					PassesSequenceCriteria = false;
 			}
 			//handles "SiN" option
-			int siNCount =0;
+			int siNCount = 0;
 			for (Counter = 0; Counter < SeqMustIncludeEither.length(); Counter++) {
 
-				if(TSequence.contains(Character.toString(SeqMustIncludeEither.charAt(Counter))))
-				{
+				if (TSequence.contains(Character.toString(SeqMustIncludeEither.charAt(Counter)))) {
 					siNCount++;
 				}
 			}
-			if( SeqMustIncludeEither.length()>0) {
+			if (SeqMustIncludeEither.length() > 0) {
 
-				if(siNCount>0)
-				{
+				if (siNCount > 0) {
 					PassesSequenceCriteria = true;
 				} else {
 					PassesSequenceCriteria = false;
@@ -1047,11 +1045,14 @@ public class SelectCriteria {
 		if (UseMaxMZ) {
 			PassesMZ &= ObservedMZ < MaxMZ;
 		}
-		if (UseMinDeltaMass) {
-			PassesDeltaMass = Math.abs(TestSubject.Adjusted_PPM_Offset) > MinDeltaMassPPM;
-		}
-		if (UseMaxDeltaMass) {
-			PassesDeltaMass &= Math.abs(TestSubject.Adjusted_PPM_Offset) < MaxDeltaMassPPM;
+		if (!(fromDTAReader && dms))
+		{
+			if (UseMinDeltaMass) {
+				PassesDeltaMass = Math.abs(TestSubject.Adjusted_PPM_Offset) > MinDeltaMassPPM;
+			}
+			if (UseMaxDeltaMass) {
+				PassesDeltaMass &= Math.abs(TestSubject.Adjusted_PPM_Offset) < MaxDeltaMassPPM;
+			}
 		}
 		if (UseFilenameFilter) {
 			if (TestSubject.RootFileName.indexOf(FilenameFilter) == -1) {
@@ -1075,7 +1076,7 @@ public class SelectCriteria {
 				&& (TestSubject.ChargeState >= this.MinChargeState)
 				&& (TestSubject.ChargeState <= this.MaxChargeState)
 				&& (((HandleModified == 0) && TestSubject.Modified)
-						|| ((HandleModified == 2) && !TestSubject.Modified) || (HandleModified == 1))
+				|| ((HandleModified == 2) && !TestSubject.Modified) || (HandleModified == 1))
 				&& (!(TestSubject.Tryptic < RequireTryptic))
 				&& (PermitAmbiguous || TestSubject.EquivSeq < 2)
 				&& (TestSubject.PepConf >= this.MinPepConf)
@@ -1087,55 +1088,63 @@ public class SelectCriteria {
 				&& (TestSubject.IonProportion >= this.MinIonProportion)
 				&& (TestSubject.Sp < this.MaximumSp) && (TestSubject.SpScore > this.MinSpScore)  );
 		switch (PeptideValidation) {
-		case -1:
-			if (TestSubject.Validated == 'N')
-				return true;
-			else
-				return false;
-		case 1:
-			switch (TestSubject.Validated) {
-			case 'N':
-				return false;
-			case 'Y':
-				return true;
-			case 'M':
-			case 'U':
-				return PassesOnMerits;
+			case -1:
+				if (TestSubject.Validated == 'N')
+					return true;
+				else
+					return false;
+			case 1:
+				switch (TestSubject.Validated) {
+					case 'N':
+						return false;
+					case 'Y':
+						return true;
+					case 'M':
+					case 'U':
+						return PassesOnMerits;
+					default:
+						System.out.println("Validation went awry for "
+								+ TestSubject.FileName);
+						return PassesOnMerits;
+				}
+			case 2:
+				switch (TestSubject.Validated) {
+					case 'N':
+						return false;
+					case 'Y':
+					case 'M':
+						return true;
+					case 'U':
+						return PassesOnMerits;
+					default:
+						System.out.println("Validation went awry for "
+								+ TestSubject.FileName);
+						return PassesOnMerits;
+				}
+			case 3:
+				switch (TestSubject.Validated) {
+					case 'N':
+					case 'U':
+						return false;
+					case 'Y':
+					case 'M':
+						return true;
+					default:
+						System.out.println("Validation went awry for "
+								+ TestSubject.FileName);
+						return PassesOnMerits;
+				}
 			default:
-				System.out.println("Validation went awry for "
-						+ TestSubject.FileName);
 				return PassesOnMerits;
-			}
-		case 2:
-			switch (TestSubject.Validated) {
-			case 'N':
-				return false;
-			case 'Y':
-			case 'M':
-				return true;
-			case 'U':
-				return PassesOnMerits;
-			default:
-				System.out.println("Validation went awry for "
-						+ TestSubject.FileName);
-				return PassesOnMerits;
-			}
-		case 3:
-			switch (TestSubject.Validated) {
-			case 'N':
-			case 'U':
-				return false;
-			case 'Y':
-			case 'M':
-				return true;
-			default:
-				System.out.println("Validation went awry for "
-						+ TestSubject.FileName);
-				return PassesOnMerits;
-			}
-		default:
-			return PassesOnMerits;
 		}
+	}
+
+	/*
+	 * Apply the spectrum-specific filters. Return true if the identification
+	 * meets the criteria or false if it doesn't.
+	 */
+	public boolean Allow(DTAFile TestSubject) {
+		return Allow(TestSubject, false);
 	}
 
 	/*

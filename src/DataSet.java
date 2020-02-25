@@ -2049,7 +2049,7 @@ public class DataSet {
 						 * If this one qualifies, store it in the list of the
 						 * current locus.
 						 */
-						if ((!Cutoffs.UseCriteria) || (Cutoffs.Allow(TempDTA))) {
+						if ((!Cutoffs.UseCriteria) || (Cutoffs.Allow(TempDTA, true))) {
 						/*	if(ProtBuffer.Locus.equals("sp|Q06830|PRDX1_HUMAN"))
 							{
 								System.out.println(WholeLine);
@@ -2162,6 +2162,9 @@ public class DataSet {
 		 * to individual spectra. Otherwise, cut out the spectra that don't pass
 		 * the appropriate criteria.
 		 */
+		if(Cutoffs.dms)
+			LocusList.CalculateMedianAdjustedDeltaMass();
+
 		if (Cutoffs.UseCriteria)
 			LocusList.DumpUnqualifiedDTAs(Cutoffs);
 		/*

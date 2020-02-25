@@ -172,12 +172,7 @@ public class MissingPSMRetriever {
             throws IOException {
         existingPsm =    foundPSM(dtaselect);
         File dir = new File(searchDir);
-       String[] list =  dir.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                return s.endsWith(".sqt");
-            }
-        });
+       String[] list =  dir.list((file, s) -> s.endsWith(".sqt"));
        for(String s: list)
        {
            generateNewPSM(searchDir + File.separator+ s,printPeptides);
