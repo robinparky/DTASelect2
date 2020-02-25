@@ -1,4 +1,3 @@
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.io.*;
 import java.util.*;
@@ -1947,21 +1946,37 @@ public class Protein {
 		}
 	}
 
+	public static double getMedian(List<Double> list)
+	{
+		Collections.sort(list);
+		int mid = list.size()/2;
+		double median;
+		if(list.size()%2 ==0)
+		{
+			median = (list.get(mid) + list.get(mid-1))/2;
+		}
+		else
+		{
+			median = list.get(mid);
+		}
+		return median;
+	}
+
 	public void CalculateMedianAdjustedDeltaMass()
 	{
 		Protein Runner = this.Next;
 		DTAFile DTARunner;
-		DescriptiveStatistics statistics = new DescriptiveStatistics();
+		List<Double> ppmList = new ArrayList<>();
 		while (Runner != null) {
 			DTARunner = Runner.DTAs.Next;
 			while (DTARunner != null) {
 				double ppm = DTARunner.Adjusted_PPM_Offset;
-				statistics.addValue(ppm);
+				ppmList.add(ppm);
 				DTARunner = DTARunner.Next;
 			}
 			Runner = Runner.Next;
 		}
-		double median = statistics.getPercentile(50);
+		double median = getMedian(ppmList);
 		Runner = this.Next;
 		while (Runner != null) {
 			DTARunner = Runner.DTAs.Next;
