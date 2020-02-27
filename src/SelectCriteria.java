@@ -1045,7 +1045,16 @@ public class SelectCriteria {
 		if (UseMaxMZ) {
 			PassesMZ &= ObservedMZ < MaxMZ;
 		}
-		if (!(fromDTAReader && dms))
+		if(dms && !fromDTAReader)
+		{
+			if (UseMinDeltaMass) {
+				PassesDeltaMass = Math.abs(TestSubject.Shifted_PPM_Offset) > MinDeltaMassPPM;
+			}
+			if (UseMaxDeltaMass) {
+				PassesDeltaMass &= Math.abs(TestSubject.Shifted_PPM_Offset) < MaxDeltaMassPPM;
+			}
+		}
+		else if (!dms)
 		{
 			if (UseMinDeltaMass) {
 				PassesDeltaMass = Math.abs(TestSubject.Adjusted_PPM_Offset) > MinDeltaMassPPM;

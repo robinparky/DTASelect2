@@ -25,6 +25,7 @@ public class DTAFile {
     float                PrecursorMass = 0.0f;
     double               Raw_PPM_Offset = 0.0;
     double               Adjusted_PPM_Offset = 0.0;
+	double               Shifted_PPM_Offset = 0.0;
     float                TotalIntensity;
     float                IonProportion;
     float                DeltCN = 0.0f;

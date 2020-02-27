@@ -882,12 +882,13 @@ public class Protein {
 		DTAFile Runner = this.DTAs.Next;
 
 		while (Runner != null) {
+			double dm = Cutoffs.dms ? Runner.Shifted_PPM_Offset : Runner.Adjusted_PPM_Offset;
 			if (Runner.Tryptic >= Cutoffs.MinProtTryptic
 					&& Runner.SpScore >= Cutoffs.MinProtSpScore
 					&& Runner.XCorr >= Cutoffs.MinProtXCorr
 					&& Runner.PepFP <= Cutoffs.MaxProtMinFP
 					&& Runner.PepConf >= Cutoffs.MinProtPepConf
-					&& Math.abs(Runner.Adjusted_PPM_Offset) <= Cutoffs.MaxProtDM) {
+					&& Math.abs(dm) <= Cutoffs.MaxProtDM) {
 				return true;
 			}
 			Runner = Runner.Next;
@@ -1981,7 +1982,7 @@ public class Protein {
 		while (Runner != null) {
 			DTARunner = Runner.DTAs.Next;
 			while (DTARunner != null) {
-				DTARunner.Adjusted_PPM_Offset = DTARunner.Adjusted_PPM_Offset - median;
+				DTARunner.Shifted_PPM_Offset = DTARunner.Adjusted_PPM_Offset - median;
 				DTARunner = DTARunner.Next;
 			}
 			Runner = Runner.Next;
