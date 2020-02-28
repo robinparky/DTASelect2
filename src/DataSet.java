@@ -767,6 +767,7 @@ public class DataSet {
 						OutgoingTXT.write("N");
 						break;
 					}
+					double dm = Cutoffs.showCorrectedDmValue ? DTARunner.Shifted_PPM_Offset : DTARunner.Adjusted_PPM_Offset;
 					OutgoingTXT
 							.write(tab
 									+ DTARunner.FileName
@@ -786,7 +787,7 @@ public class DataSet {
 											&& Cutoffs.ExtraColumns ? Protein
 											.RoundTo(
 													new Float(
-															DTARunner.Adjusted_PPM_Offset)
+															dm)
 															.floatValue(), 1)
 											+ tab
 											: "")
@@ -832,6 +833,7 @@ public class DataSet {
 						// Note that we'll need to add specific
 						// handling for Mascot CGIs when feasible.
 						// DisplayType == 2 for Mascot.
+						 dm = Cutoffs.showCorrectedDmValue? DTARunner.Shifted_PPM_Offset : DTARunner.Adjusted_PPM_Offset;
 						if(printHTML) Outgoing.write(NewShow
 								+ DTARunner.ShowString()
 								+ CellSep
@@ -849,7 +851,7 @@ public class DataSet {
 								+ new Float(DTARunner.CalcPreMass).toString()
 								+ (Cutoffs.DisplayDeltaMass ? CellSep
 										+ new Float(Protein.RoundTo(new Float(
-												DTARunner.Adjusted_PPM_Offset)
+												dm)
 												.floatValue(), 1)).toString()
 										: "")
 								+ CellSep
@@ -888,6 +890,8 @@ public class DataSet {
 							MSBug = true;
 							SpectrumFile = "";
 						}
+						 dm = Cutoffs.showCorrectedDmValue? DTARunner.Shifted_PPM_Offset : DTARunner.Adjusted_PPM_Offset;
+
 						if(printHTML) Outgoing.write(DisplayIons
 								+ SpectrumFile
 								+ ".dta"
@@ -918,9 +922,7 @@ public class DataSet {
 								+ CellSep
 								+ new Float(DTARunner.CalcPreMass).toString()
 								+ (Cutoffs.DisplayDeltaMass ? CellSep
-										+ new Float(Protein.RoundTo(new Float(
-												DTARunner.Adjusted_PPM_Offset)
-												.floatValue(), 1)).toString()
+										+ new Float(Protein.RoundTo(new Float(dm).floatValue(), 1)).toString()
 										: "")
 								+ CellSep
 								+ new Integer(DTARunner.Sp).toString()

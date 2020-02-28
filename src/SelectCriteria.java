@@ -169,6 +169,7 @@ public class SelectCriteria {
 
 	boolean addPSM  = false;
 	boolean dms  = false;
+	boolean showCorrectedDmValue = false;
 	/*
 	 * If the user has commonly used options for DTASelect, he or she can write
 	 * them into a file called DTASelect.params and copy them around rather than
@@ -779,6 +780,11 @@ public class SelectCriteria {
 			else if(args[i].equals("-DMS"))
 			{
 				dms = true;
+				int index = i+1;
+				int showCorrectedDmsArg = Integer.parseInt(args[index]);
+				showCorrectedDmValue = showCorrectedDmsArg == 1;
+				i++;
+
 			}
 			else if(args[i].equals("--printHTML"))
 			{
