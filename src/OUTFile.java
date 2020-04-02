@@ -2,6 +2,8 @@ import javax.swing.plaf.ColorUIResource;
 import java.io.*;
 import java.util.*;
 import java.net.URLDecoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //OUTFile object
 //For DTASelect
@@ -134,6 +136,7 @@ public class OUTFile {
 		while ((WholeLine != null) && (!WholeLine.startsWith("S\t"))) {
 			WholeLine = Incoming.readLine();
 		}
+
 		// Proceed until the end of the file
 		while (WholeLine != null) {
 			// Assume we're on an S line
@@ -161,6 +164,7 @@ public class OUTFile {
 			bTotalIntensity = new Float(Parser.nextToken()).floatValue();
 			// Ignore lowest Sp and # of matched peptides
 			WholeLine = Incoming.readLine();
+
 			try {
 				while ((bDeltCN == 0.0f) && (WholeLine != null)
 						&& (WholeLine.startsWith("M\t"))) {
@@ -224,6 +228,10 @@ public class OUTFile {
 						bIPBottom = new Integer(Parser.nextToken()).intValue();
 						bIonProportion = (float) bIPTop / (float) bIPBottom;
 						bSequence = Parser.nextToken().toUpperCase();
+						if(bSequence.contains("["))
+						{
+							bSequence = IsoformUtils.getRegularSequence(bSequence);
+						}
 							
 						bValidated = Parser.nextToken().charAt(0);
 						WholeLine = Incoming.readLine();
