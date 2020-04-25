@@ -365,9 +365,17 @@ public class DTASelect {
 			if (AppObject.Data.Cutoffs.UseGUIInstead || Protein.PrintTest()) {
 				// Read .out or .sqt files into memory
 				AppObject.ReadAndPreprocessProteins(); //TODO to change for debug
+
 				// Apply the user-selected criteria
 				System.out.println("Applying criteria to spectra and loci...");
-				AppObject.Data.ApplyCriteria();
+				if(AppObject.Data.Cutoffs.dms)
+				{
+					AppObject.Data.ApplyCriteriaDMS();
+				}
+				else
+				{
+					AppObject.Data.ApplyCriteria();
+				}
 				// Compress spectra to IDX and SPM files
 				if (AppObject.Data.Cutoffs.CompressDTAs)
 					AppObject.CompressSpectra();

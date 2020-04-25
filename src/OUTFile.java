@@ -181,12 +181,13 @@ public class OUTFile {
 					bSp = new Short(Parser.nextToken()).shortValue();
 					Parser.nextToken();
 					bDeltCN = new Float(Parser.nextToken()).floatValue();
-					Parser.nextToken();
+					double tempxcorr = Double.parseDouble(Parser.nextToken());
+					boolean passesXcorrFilter =(!Cutoffs.filterReadXorr || tempxcorr> Cutoffs.minReadXorr);
 					Parser.nextToken();
 					Parser.nextToken();
 					Parser.nextToken();
 					SecondSequence = Parser.nextToken().toUpperCase();
-					if (bDeltCN == 0.0f) {
+					if (bDeltCN == 0.0f && passesXcorrFilter) {
 						bEquivSeq++;
 						SecondXCorrRank = bXCorrRank;
 						Parser = new StringTokenizer(WholeLine);

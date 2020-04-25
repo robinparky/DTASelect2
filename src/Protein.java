@@ -877,18 +877,41 @@ public class Protein {
 			}
 		}
 	}
+	public boolean PassScores(SelectCriteria Cutoffs)
+	{
+		return PassScores(Cutoffs, false);
+	}
 
-	public boolean PassScores(SelectCriteria Cutoffs) {
+	public boolean PassScores(SelectCriteria Cutoffs, boolean fromMedianfilter) {
 		DTAFile Runner = this.DTAs.Next;
 
 		while (Runner != null) {
-			double dm = Cutoffs.dms ? Runner.Shifted_PPM_Offset : Runner.Adjusted_PPM_Offset;
+			boolean dmFilter;
+			if(Cutoffs.dms)
+			{
+				if(fromMedianfilter)
+				{
+
+					double dm =  Runner.Shifted_PPM_Offset;
+					dmFilter = Math.abs(dm) <= Cutoffs.MaxProtDM;
+				}
+				else
+				{
+					dmFilter = true;
+				}
+			}
+			else
+			{
+				double dm = Runner.Adjusted_PPM_Offset;
+				dmFilter = Math.abs(dm) <= Cutoffs.MaxProtDM;
+			}
+
 			if (Runner.Tryptic >= Cutoffs.MinProtTryptic
 					&& Runner.SpScore >= Cutoffs.MinProtSpScore
 					&& Runner.XCorr >= Cutoffs.MinProtXCorr
 					&& Runner.PepFP <= Cutoffs.MaxProtMinFP
 					&& Runner.PepConf >= Cutoffs.MinProtPepConf
-					&& Math.abs(dm) <= Cutoffs.MaxProtDM) {
+					&& dmFilter) {
 				return true;
 			}
 			Runner = Runner.Next;
@@ -1963,7 +1986,58 @@ public class Protein {
 		return median;
 	}
 
-	public void CalculateMedianAdjustedDeltaMass()
+	public void CalculateProteinFalsePositive()
+	{
+		Protein Runner = this.Next;
+		DTAFile DTARunner;
+		List<DTAFile> dtaList = new ArrayList<>();
+		boolean isDecoy = true;
+		boolean containPeptides = false;
+		while (Runner != null) {
+			DTARunner = Runner.DTAs.Next;
+
+			if(!Runner.Locus.startsWith("Reverse_"))
+			{
+				isDecoy =false;
+			}
+			if(DTARunner !=null)
+			{
+				containPeptides = true;
+			}
+			while (DTARunner != null) {
+				dtaList.add(DTARunner);
+				DTARunner.IsDecoy = isDecoy;
+				DTARunner = DTARunner.Next;
+			}
+			if(containPeptides)
+			{
+				isDecoy = true;
+				containPeptides = false;
+			}
+
+			Runner = Runner.Next;
+		}
+		Collections.sort(dtaList, Comparator.comparing(DTAFile::getPepFP));
+		int forwardCount =0;
+		int reverseCount =0;
+		for(DTAFile dta: dtaList)
+		{
+			if(dta.IsDecoy)
+			{
+				reverseCount++;
+			}
+			else
+			{
+				forwardCount++;
+			}
+
+		}
+
+	}
+
+
+
+	public void CalculateFilterMedianAdjustedDeltaMass(SelectCriteria cutoffs)
 	{
 		Protein Runner = this.Next;
 		DTAFile DTARunner;
@@ -1978,12 +2052,26 @@ public class Protein {
 			Runner = Runner.Next;
 		}
 		double median = getMedian(ppmList);
+	//	System.out.println("<<>><>  "+median);
 		Runner = this.Next;
+		DTARunner =null;
 		while (Runner != null) {
-			DTARunner = Runner.DTAs.Next;
-			while (DTARunner != null) {
-				DTARunner.Shifted_PPM_Offset = DTARunner.Adjusted_PPM_Offset - median;
-				DTARunner = DTARunner.Next;
+			DTARunner = Runner.DTAs;
+			while (DTARunner.Next != null) {
+				DTARunner.Next.Shifted_PPM_Offset = DTARunner.Next.Adjusted_PPM_Offset - median;
+				if(cutoffs.AllowShiftDM(DTARunner.Next))
+				{
+					DTARunner = DTARunner.Next;
+				}
+				else
+				{
+					DTARunner.Next = DTARunner.Next.Next;
+				}
+
+			}
+			if(cutoffs.UseProteinFilters)
+			{
+				Runner.HasGreatPeptide = Runner.PassScores(cutoffs, true);
 			}
 			Runner = Runner.Next;
 		}

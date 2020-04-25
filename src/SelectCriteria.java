@@ -16,6 +16,8 @@ public class SelectCriteria {
 	float MinSpScore = -1f;
 	boolean UseXCorrCriteria = true;
 	boolean DisplayXCorrCriteria = false;
+	boolean filterReadXorr = false;
+	double minReadXorr = 1.0;
 	float MinSingleChargeXCorr = 1.0f;
 	float MinDoubleChargeXCorr = 1.0f;
 	float MinTripleChargeXCorr = 1.0f;
@@ -780,6 +782,7 @@ public class SelectCriteria {
 			else if(args[i].equals("-DMS"))
 			{
 				dms = true;
+				DisplayDeltaMass = true;
 				int index = i+1;
 				int showCorrectedDmsArg = Integer.parseInt(args[index]);
 				showCorrectedDmValue = showCorrectedDmsArg == 1;
@@ -789,6 +792,10 @@ public class SelectCriteria {
 			else if(args[i].equals("--printHTML"))
 			{
 				printHTML = true;
+			}
+			else if(args[i].equals("--xcorrFilterReadSqt"))
+			{
+				filterReadXorr = true;
 			}
 			else {
 				System.out.println("I don't understand this option:  "
@@ -1051,16 +1058,7 @@ public class SelectCriteria {
 		if (UseMaxMZ) {
 			PassesMZ &= ObservedMZ < MaxMZ;
 		}
-		if(dms && !fromDTAReader)
-		{
-			if (UseMinDeltaMass) {
-				PassesDeltaMass = Math.abs(TestSubject.Shifted_PPM_Offset) > MinDeltaMassPPM;
-			}
-			if (UseMaxDeltaMass) {
-				PassesDeltaMass &= Math.abs(TestSubject.Shifted_PPM_Offset) < MaxDeltaMassPPM;
-			}
-		}
-		else if (!dms)
+		if (!dms)
 		{
 			if (UseMinDeltaMass) {
 				PassesDeltaMass = Math.abs(TestSubject.Adjusted_PPM_Offset) > MinDeltaMassPPM;
@@ -1162,6 +1160,16 @@ public class SelectCriteria {
 		return Allow(TestSubject, false);
 	}
 
+	public boolean AllowShiftDM(DTAFile TestSubject) {
+		boolean PassesDeltaMass = true;
+		if (UseMinDeltaMass) {
+			PassesDeltaMass = Math.abs(TestSubject.Shifted_PPM_Offset) > MinDeltaMassPPM;
+		}
+		if (UseMaxDeltaMass) {
+			PassesDeltaMass &= Math.abs(TestSubject.Shifted_PPM_Offset) < MaxDeltaMassPPM;
+		}
+		return PassesDeltaMass;
+	}
 	/*
 	 * Create a string announcing the current settings for each of the criteria.
 	 */
