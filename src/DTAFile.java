@@ -1198,4 +1198,7 @@ public class DTAFile {
         Adjusted_PPM_Offset = Raw_PPM_Offset;
     }
 
+	public float getPepFP() {
+		return PepFP;
+	}
 }

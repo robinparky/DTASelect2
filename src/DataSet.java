@@ -2151,6 +2151,8 @@ public class DataSet {
 		}
 	}
 
+
+
 	/*
 	 * Caution! This function is used by both Contrast and DTASelect. This
 	 * function applies spectrum-specific criteria, determines the redundancy of
@@ -2164,11 +2166,12 @@ public class DataSet {
 		 * to individual spectra. Otherwise, cut out the spectra that don't pass
 		 * the appropriate criteria.
 		 */
-		if(Cutoffs.dms)
-			LocusList.CalculateMedianAdjustedDeltaMass();
+
 
 		if (Cutoffs.UseCriteria)
 			LocusList.DumpUnqualifiedDTAs(Cutoffs);
+
+
 		/*
 		 * Determine how many copies of each spectrum remain after the spectrum
 		 * filtering.
@@ -2222,8 +2225,86 @@ public class DataSet {
 			LocusList.RemoveSubsetsQuick();
 		}
 		//LocusList.CalculateRedundancyForList(Cutoffs.PurgeDuplicateSequences);
+	}
+
+	public void ApplyCriteriaDMS() {
+		/*
+		 * If the user has specified the -n option, no criteria will be applied
+		 * to individual spectra. Otherwise, cut out the spectra that don't pass
+		 * the appropriate criteria.
+		 */
+
+
+		if (Cutoffs.UseCriteria)
+			LocusList.DumpUnqualifiedDTAs(Cutoffs);
+
+
+		/*
+		 * Determine how many copies of each spectrum remain after the spectrum
+		 * filtering.
+		 */
+		LocusList.CalculateRedundancyForList(Cutoffs);
+		if (Cutoffs.UseCriteria) {
+			/*
+			 * Apply locus-specific criteria, first removing redundant copies of
+			 * spectra if specified and then removing proteins with insufficient
+			 * redundancy, uniqueness, or peptide variety.
+			 */
+			// If -t 1 or -t 2 is in place, do that.
+			switch (Cutoffs.PurgeDuplicateSequences) {
+				case 1:
+					LocusList.DitchDuplicateDTAsBySaltStep();
+					break;
+				case 2:
+					LocusList.DitchDuplicateDTAsByXCorr();
+					break;
+			}
+			/* Apply the -p, -r, -M, and -u filters */
+
+		}
+
+		/*
+		 * Now that we almost have our final list of DTAs and Loci, calculate
+		 * the sequence coverage for each
+		 */
+		LocusList.CalculateCoverageForList(false);
+		if (Cutoffs.UseCriteria) {
+			LocusList.DitchProteinsWithLowSequenceCoverage(this.Cutoffs);
+		}
+
+		if(Cutoffs.UseCriteria)
+		{
+			/* Apply the -e, -E, -l, and -L filters */
+			/* Apply the --mw, --MW, --pi, and --PI filters */
+			/* Apply the -V filter */
+			Protein PRunner = LocusList;
+			while (PRunner.Next != null) {
+				if (Cutoffs.Permit(PRunner.Next)) {
+					PRunner = PRunner.Next;
+				} else {
+					PRunner.Next = PRunner.Next.Next;
+				}
+			}
+			LocusList.CalculateFilterMedianAdjustedDeltaMass(Cutoffs);
+			LocusList.DitchProteinsWithoutSufficientDTAs(this.Cutoffs);
+		}
+		else
+		{
+			LocusList.CalculateFilterMedianAdjustedDeltaMass(Cutoffs);
+		}
+		/*
+		 * To remove subset proteins, we must first group the identicals. Since
+		 * Contrast determines data set similarity after this step, we must
+		 * ungroup when we're running that rather than DTASelect.
+		 */
+		LocusList.GroupIdenticalsOld();
+		if (Cutoffs.UseCriteria && Cutoffs.RemoveSubsets) {
+			LocusList.RemoveSubsetsQuick();
+		}
+		//LocusList.CalculateRedundancyForList(Cutoffs.PurgeDuplicateSequences);
 
 	}
+
 
 	/*
 	 * This method assigns a clssification to each protein listed in the
