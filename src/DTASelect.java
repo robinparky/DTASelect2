@@ -278,6 +278,9 @@ public class DTASelect {
 		System.out.println("\t\tPlease check http://manual.integratedproteomics.com/1/en/topic/16-2-unique-group-filter" +
 				" for more information ");
 		System.out.println("-addPSM\t\tinclude all spectra from unfiltered data for identified peptides");
+		System.out.println("-DMS\t\t center delta mass values by median; 1 indicates corrected value; 0 keeps original value;" +
+				"both options will use new centered delta mass values internally");
+		System.out.println("-xcorrFilterReadSqt\t\t filters peptides with xcorr below 1.0 at read level");
 		System.out.println("Defaults:");
 		System.out.println(Cutoffs.PrintCriteria("", "\n", "\t"));
 		System.exit(0);
