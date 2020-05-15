@@ -2243,7 +2243,6 @@ public class DataSet {
 		 * Determine how many copies of each spectrum remain after the spectrum
 		 * filtering.
 		 */
-		LocusList.CalculateRedundancyForList(Cutoffs);
 		if (Cutoffs.UseCriteria) {
 			/*
 			 * Apply locus-specific criteria, first removing redundant copies of
@@ -2267,10 +2266,7 @@ public class DataSet {
 		 * Now that we almost have our final list of DTAs and Loci, calculate
 		 * the sequence coverage for each
 		 */
-		LocusList.CalculateCoverageForList(false);
-		if (Cutoffs.UseCriteria) {
-			LocusList.DitchProteinsWithLowSequenceCoverage(this.Cutoffs);
-		}
+
 
 		if(Cutoffs.UseCriteria)
 		{
@@ -2286,11 +2282,22 @@ public class DataSet {
 				}
 			}
 			LocusList.CalculateFilterMedianAdjustedDeltaMass(Cutoffs);
+			LocusList.CalculateRedundancyForList(Cutoffs);
+			LocusList.CalculateCoverageForList(false);
+			if (Cutoffs.UseCriteria) {
+				LocusList.DitchProteinsWithLowSequenceCoverage(this.Cutoffs);
+			}
 			LocusList.DitchProteinsWithoutSufficientDTAs(this.Cutoffs);
 		}
 		else
 		{
 			LocusList.CalculateFilterMedianAdjustedDeltaMass(Cutoffs);
+			LocusList.CalculateRedundancyForList(Cutoffs);
+			LocusList.CalculateCoverageForList(false);
+			if (Cutoffs.UseCriteria) {
+				LocusList.DitchProteinsWithLowSequenceCoverage(this.Cutoffs);
+			}
+
 		}
 		/*
 		 * To remove subset proteins, we must first group the identicals. Since
