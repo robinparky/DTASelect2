@@ -2051,31 +2051,33 @@ public class Protein {
 			}
 			Runner = Runner.Next;
 		}
-		double median = getMedian(ppmList);
-	//	System.out.println("<<>><>  "+median);
-		Runner = this.Next;
-		DTARunner =null;
-		while (Runner != null) {
-			DTARunner = Runner.DTAs;
-			while (DTARunner.Next != null) {
-				DTARunner.Next.Shifted_PPM_Offset = DTARunner.Next.Adjusted_PPM_Offset - median;
-				if(cutoffs.AllowShiftDM(DTARunner.Next))
-				{
-					DTARunner = DTARunner.Next;
-				}
-				else
-				{
-					DTARunner.Next = DTARunner.Next.Next;
-				}
+		if(ppmList.size()>1)
+		{
+			double median = getMedian(ppmList);
+			//	System.out.println("<<>><>  "+median);
+			Runner = this.Next;
+			DTARunner =null;
+			while (Runner != null) {
+				DTARunner = Runner.DTAs;
+				while (DTARunner.Next != null) {
+					DTARunner.Next.Shifted_PPM_Offset = DTARunner.Next.Adjusted_PPM_Offset - median;
+					if(cutoffs.AllowShiftDM(DTARunner.Next))
+					{
+						DTARunner = DTARunner.Next;
+					}
+					else
+					{
+						DTARunner.Next = DTARunner.Next.Next;
+					}
 
+				}
+				if(cutoffs.UseProteinFilters)
+				{
+					Runner.HasGreatPeptide = Runner.PassScores(cutoffs, true);
+				}
+				Runner = Runner.Next;
 			}
-			if(cutoffs.UseProteinFilters)
-			{
-				Runner.HasGreatPeptide = Runner.PassScores(cutoffs, true);
-			}
-			Runner = Runner.Next;
 		}
-
 	}
 
 	/*
@@ -2564,7 +2566,7 @@ public class Protein {
 	// Return a string containing the version number
 	public static String Version() {
 		//return "DTASelect v2.0.49";
-		return "DTASelect v2.1.10";
+		return "DTASelect v2.1.11";
 	}
 
 	/*
