@@ -793,9 +793,15 @@ public class SelectCriteria {
 			{
 				printHTML = true;
 			}
-			else if(args[i].equals("--xcorrFilterReadSqt"))
+			else if(args[i].startsWith("--xcorrFilterReadSqt"))
 			{
 				filterReadXorr = true;
+				if(args[i].contains("="))
+				{
+					String limitStr = args[i].split("=")[1];
+					double limit = Double.parseDouble(limitStr);
+					minReadXorr = limit;
+				}
 			}
 			else {
 				System.out.println("I don't understand this option:  "
