@@ -172,6 +172,9 @@ public class SelectCriteria {
 	boolean addPSM  = false;
 	boolean dms  = false;
 	boolean showCorrectedDmValue = false;
+
+	boolean filterByModification = false;
+	String modFilterStr = "";
 	/*
 	 * If the user has commonly used options for DTASelect, he or she can write
 	 * them into a file called DTASelect.params and copy them around rather than
@@ -802,6 +805,11 @@ public class SelectCriteria {
 					double limit = Double.parseDouble(limitStr);
 					minReadXorr = limit;
 				}
+			}
+			else if(args[i].startsWith("--filterMod="))
+			{
+				filterByModification = true;
+				modFilterStr = args[i].split("=")[1];
 			}
 			else {
 				System.out.println("I don't understand this option:  "
