@@ -135,6 +135,7 @@ public class LDAConfidence {
 		while (OUTRunner.OriginalNext != null) {
 			OUTRunner = OUTRunner.OriginalNext;
 			TempChargeState = OUTRunner.DTA.ChargeState;
+			//System.out.println("Filename "+OUTRunner.DTA.FileName +"\t"+OUTRunner.DTA.ScanNumber);
 
 			if (TempChargeState > Cutoffs.MaxStatisticsCharge)
 				TempChargeState = Cutoffs.MaxStatisticsCharge;

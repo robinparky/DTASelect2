@@ -151,21 +151,21 @@ public class SingleDimensionScore {
 
     public void GetTPRate() {
 	// Compute TPRate by counting elements
-	int counter, rank, Nt, Nf;
+		int counter, rank, Nt, Nf;
 
-	Nt = 0; Nf = 0;
-	TPRate = new double[NTotal];
-	for (counter = NTotal -1; counter > -1; counter--) {
-	    rank = RankIndex[counter];
-	    if (Positive[rank])
-		Nt++;
-	    else 
-		Nf++;
-            if (Nt > Nf)
-                TPRate[rank] = 1.0 * (Nt - Nf) / Nt;
-            else
-                TPRate[rank] = 0.0;
-	}
+		Nt = 0; Nf = 0;
+		TPRate = new double[NTotal];
+		for (counter = NTotal -1; counter > -1; counter--) {
+			rank = RankIndex[counter];
+			if (Positive[rank])
+				Nt++;
+			else
+				Nf++;
+			if (Nt > Nf)
+				TPRate[rank] = 1.0 * (Nt - Nf) / Nt;
+			else
+				TPRate[rank] = 0.0;
+		}
 
     }
 

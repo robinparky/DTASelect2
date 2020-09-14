@@ -282,6 +282,8 @@ public class DTASelect {
 				"both options will use new centered delta mass values internally");
 		System.out.println("--xcorrFilterReadSqt\t\t filters peptides with xcorr below 1.0 at read level");
 		System.out.println(("--filterMod\t\t filter peptides at read level by modification"));
+		System.out.println(("--printHTML\t\t creates DTASelect.html"));
+
 		System.out.println("Defaults:");
 		System.out.println(Cutoffs.PrintCriteria("", "\n", "\t"));
 		System.exit(0);
