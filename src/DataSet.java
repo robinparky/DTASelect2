@@ -2243,24 +2243,7 @@ public class DataSet {
 		 * Determine how many copies of each spectrum remain after the spectrum
 		 * filtering.
 		 */
-		if (Cutoffs.UseCriteria) {
-			/*
-			 * Apply locus-specific criteria, first removing redundant copies of
-			 * spectra if specified and then removing proteins with insufficient
-			 * redundancy, uniqueness, or peptide variety.
-			 */
-			// If -t 1 or -t 2 is in place, do that.
-			switch (Cutoffs.PurgeDuplicateSequences) {
-				case 1:
-					LocusList.DitchDuplicateDTAsBySaltStep();
-					break;
-				case 2:
-					LocusList.DitchDuplicateDTAsByXCorr();
-					break;
-			}
-			/* Apply the -p, -r, -M, and -u filters */
 
-		}
 
 		/*
 		 * Now that we almost have our final list of DTAs and Loci, calculate
@@ -2282,11 +2265,32 @@ public class DataSet {
 				}
 			}
 			LocusList.CalculateFilterMedianAdjustedDeltaMass(Cutoffs);
-			LocusList.CalculateRedundancyForList(Cutoffs);
 			LocusList.CalculateCoverageForList(false);
 			if (Cutoffs.UseCriteria) {
 				LocusList.DitchProteinsWithLowSequenceCoverage(this.Cutoffs);
 			}
+
+			LocusList.CalculateRedundancyForList(Cutoffs);
+
+			if (Cutoffs.UseCriteria) {
+				/*
+				 * Apply locus-specific criteria, first removing redundant copies of
+				 * spectra if specified and then removing proteins with insufficient
+				 * redundancy, uniqueness, or peptide variety.
+				 */
+				// If -t 1 or -t 2 is in place, do that.
+				switch (Cutoffs.PurgeDuplicateSequences) {
+					case 1:
+						LocusList.DitchDuplicateDTAsBySaltStep();
+						break;
+					case 2:
+						LocusList.DitchDuplicateDTAsByXCorr();
+						break;
+				}
+				/* Apply the -p, -r, -M, and -u filters */
+
+			}
+
 			LocusList.DitchProteinsWithoutSufficientDTAs(this.Cutoffs);
 		}
 		else

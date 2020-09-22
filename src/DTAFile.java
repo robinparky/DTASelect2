@@ -189,7 +189,7 @@ public class DTAFile {
     /* The Sequence field of each DTAFile usually takes on the form
      * "X.XXXX.X," where the character before the first period is the
      * last residue before the N-terminal cleavage site and the final
-     * character represents the first residue after the C-terminal
+     * character represents the first residue after the C-terminalF
      * cleavage site.  This function returns only the identified
      * peptide without the context information.  Note that this
      * returned sequence will not include modification characters.  */

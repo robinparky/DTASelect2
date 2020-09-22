@@ -2566,7 +2566,7 @@ public class Protein {
 	// Return a string containing the version number
 	public static String Version() {
 		//return "DTASelect v2.0.49";
-		return "DTASelect v2.1.12";
+		return "DTASelect v2.1.13";
 	}
 
 	/*

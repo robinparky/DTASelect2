@@ -921,7 +921,6 @@ public class SelectCriteria {
 		 * Evaluates an individual identification to determine if it fits
 		 * selection criteria
 		 */
-
 		boolean PassesSequenceCriteria = true;
 		boolean PassesMaxXCorrs = true;
 		boolean PassesXCorrCriteria = true;
