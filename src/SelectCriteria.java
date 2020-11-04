@@ -805,11 +805,16 @@ public class SelectCriteria {
 					double limit = Double.parseDouble(limitStr);
 					minReadXorr = limit;
 				}
-				else {
+				else if((i+1)< args.length-1) {
 					String limitStr = args[i + 1];
-					double limit = Double.parseDouble(limitStr);
-					minReadXorr = limit;
-					i++;
+					try {
+						double limit = Double.parseDouble(limitStr);
+						minReadXorr = limit;
+						i++;
+					}catch (NumberFormatException nfe)
+					{
+
+					}
 				}
 			}
 			else if(args[i].startsWith("--filterMod="))
