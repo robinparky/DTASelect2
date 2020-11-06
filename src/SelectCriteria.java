@@ -805,7 +805,7 @@ public class SelectCriteria {
 					double limit = Double.parseDouble(limitStr);
 					minReadXorr = limit;
 				}
-				else if((i+1)< args.length-1) {
+				else if((i+1) < args.length) {
 					String limitStr = args[i + 1];
 					try {
 						double limit = Double.parseDouble(limitStr);
