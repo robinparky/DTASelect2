@@ -813,7 +813,7 @@ public class SelectCriteria {
 						i++;
 					}catch (NumberFormatException nfe)
 					{
-
+						i--;
 					}
 				}
 			}
